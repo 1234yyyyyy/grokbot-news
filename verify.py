@@ -22,6 +22,7 @@ with sync_playwright() as p:
     pg.fill("#q", "額度"); print("search 額度", vis()); assert 0 < vis() < len(rows)
     pg.fill("#q", "zzzqqq"); assert vis() == 0 and pg.is_visible("#em")
     pg.click("#qc"); assert vis() == len(rows)
+    assert pg.locator(".c .eg").count()==len(rows) and all(t.strip() for t in pg.locator(".c .eg").all_inner_texts()), "engagement missing"
     pg.screenshot(path=f"{D}/preview.png", full_page=True)
     b.close()
 print("JS errors:", errs); assert not errs; print("OK")
