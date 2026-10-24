@@ -2,6 +2,18 @@
 
 資料來源是 `/workspace/grokbot-intel/index.csv`，欄位為 date, platform, category, title, link, summary。網站目錄 `/workspace/grokbot-intel/site` 本身就是 git repo（1234yyyyyy/grokbot-news，main 分支，GitHub Pages 從根目錄發布）。
 
+
+## 0. 先讀使用者「不重要」回饋（每次必做，最先執行）
+```bash
+cd /workspace/grokbot-intel/site && python3 feedback.py
+```
+- 產生／更新 `/workspace/grokbot-intel/not_important.csv`（date,title,link,category,keywords,platform,issue）。
+- 篩選新候選時，若與任一 not_important 項目**雷同**就丟棄：同主題／題材（關鍵字重疊、講同一件事或同類抱怨）、同類作者（如同一帳號或同類型小帳號／行銷號）、同種新聞（如同類轉載、同類教學、同類懶人包）。拿不準時偏向丟棄。
+- 丟棄的寫進 `dropped.csv`，reason 填「與不重要回饋雷同」（可附上對應的 not_important 標題）。
+- 已存在於 index.csv 且被標不重要的項目：從 index.csv 移到 dropped.csv（reason 同上）。
+- 處理完後關閉該 issue：`gh issue close <N> -R 1234yyyyyy/grokbot-news -c "已收到，YYYY-MM-DD 起排除雷同內容（共 X 則）"`。
+- 回報給使用者時附一行：本次因不重要回饋排除 X 則。
+
 1. **追加新資料列**到 `../index.csv`（不要改舊的列）。日期一律用台北時間 `YYYY-MM-DD`，查不到就寫 `未知`。category 只能是 官方更新／新聞／使用分享／應用案例／教學／問題回報。只收實際找到的真實連結。
 2. **去重**（也要排除 `../dropped.csv` 裡已有的連結）：依 link 去重，有重複會列出並保留第一筆：
    ```bash
